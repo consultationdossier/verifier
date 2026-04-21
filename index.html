@@ -1,3 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Vérification de dossier</title>
+
+<style>
+  body {
+    font-family: Arial;
+    background: #f06d06;
+    color: white;
+    text-align: center;
+    padding: 40px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  input {
+    padding: 12px;
+    width: 250px;
+    border-radius: 5px;
+    border: none;
+  }
+
+  button {
+    padding: 12px 20px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  button:hover {
+    background: #333;
+  }
+
+  #result {
+    margin-top: 30px;
+  }
+
+  .card {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 12px;
+    width: 320px;
+    margin: 20px auto;
+    text-align: left;
+  }
+</style>
+
+</head>
+
+<body>
+
+<h2>🔎 Vérification de dossier</h2>
+
+<input type="text" id="id" placeholder="Entrer votre ID">
+<button onclick="rechercher()">Rechercher</button>
+
+<div id="result"></div>
+
 <script>
 function rechercher() {
 
@@ -27,25 +93,29 @@ function rechercher() {
 
       resultats.forEach(d => {
         html += `
-          <div style="background:#fff; padding:15px; margin:10px auto; width:320px; border-radius:10px; color:black;">
-            <b>ID :</b> ${d["Submission ID"]} <br>
-            <b>Date de soumission :</b> ${d["Submitted at"] || ""} <br>
+          <div class="card">
+            <b>ID :</b> ${d["Submission ID"]} <br><br>
+            <b>Date de soumission :</b> ${d["Submitted at"] || ""} <br><br>
             <b>Prénom :</b> ${d["Prénom"] || ""} <br>
             <b>Nom :</b> ${d["Nom"] || ""} <br>
             <b>Date de naissance :</b> ${d["Date de naissance"] || ""} <br>
-            <b>Nationalité :</b> ${d["Nationalité"] || ""} <br>
-            <b>Poste :</b> ${d["Poste souhaité"] || ""} <br>
+            <b>Nationalité :</b> ${d["Nationalité"] || ""} <br><br>
+            <b>Poste :</b> ${d["Poste souhaité"] || ""} <br><br>
             <b>Statut :</b> ${d["Statut"] || "En attente"} <br>
             <b>Commentaire :</b> ${d["Commentaire"] || "Aucun"}
           </div>
         `;
       });
 
-      document.getElementById("result").innerHTML = "✅ Dossier trouvé<br>" + html;
+      document.getElementById("result").innerHTML = "✅ Dossier trouvé" + html;
 
     })
     .catch(error => {
       document.getElementById("result").innerHTML = "❌ Erreur de connexion";
+      console.error(error);
     });
 }
 </script>
+
+</body>
+</html>
