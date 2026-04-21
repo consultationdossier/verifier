@@ -59,24 +59,32 @@ button:hover {
 function rechercher() {
 
   let id = document.getElementById("id").value.trim();
+  let resultDiv = document.getElementById("result");
 
   if (!id) {
-    document.getElementById("result").innerHTML = "⚠️ Veuillez entrer un ID";
+    resultDiv.innerHTML = "⚠️ Veuillez entrer un ID";
     return;
   }
 
-  document.getElementById("result").innerHTML = "⏳ Recherche en cours...";
+  resultDiv.innerHTML = "⏳ Recherche en cours...";
 
   fetch("https://opensheet.elk.sh/1IHlqsby69hHzrbp5Ed-5BCH3AbDi4mliD4kmB7BB5bA/API")
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error("Erreur serveur");
+      return res.json();
+    })
     .then(data => {
+
+      if (!Array.isArray(data)) {
+        throw new Error("Format invalide");
+      }
 
       let resultats = data.filter(row => 
         (row["Submission ID"] || "").toLowerCase().trim() === id.toLowerCase()
       );
 
       if (resultats.length === 0) {
-        document.getElementById("result").innerHTML = "❌ Aucun dossier trouvé";
+        resultDiv.innerHTML = "❌ Aucun dossier trouvé";
         return;
       }
 
@@ -84,7 +92,6 @@ function rechercher() {
 
       resultats.forEach(d => {
 
-        // Statut
         let statut = (d["Statut"] || "").toLowerCase();
         let statutCouleur = "gray";
         let statutTexte = d["Statut"] || "En attente";
@@ -92,7 +99,6 @@ function rechercher() {
         if (statut === "valide") statutCouleur = "green";
         else if (statut === "en cours") statutCouleur = "orange";
 
-        // Date
         let dateSoumission = "Non disponible";
         if (d["Submitted at"]) {
           let dateObj = new Date(d["Submitted at"]);
@@ -131,11 +137,14 @@ function rechercher() {
         `;
       });
 
-      document.getElementById("result").innerHTML = "✅ Dossier trouvé<br>" + html;
+      resultDiv.innerHTML = "✅ Dossier trouvé<br>" + html;
 
     })
     .catch(error => {
-      document.getElementById("result").innerHTML = "❌ Erreur de connexion";
+      resultDiv.innerHTML = `
+        ❌ Impossible de charger les données<br>
+        Vérifiez votre connexion internet.
+      `;
       console.error(error);
     });
 }
