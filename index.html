@@ -1,3 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Vérification de dossier</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f06d06;
+  text-align: center;
+  padding: 40px;
+  color: white;
+}
+
+input {
+  padding: 12px;
+  width: 250px;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  padding: 12px 20px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+button:hover {
+  background: #333;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  margin: 20px auto;
+  width: 340px;
+  border-radius: 12px;
+  color: #000;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+</style>
+</head>
+
+<body>
+
+<h2>🔎 Vérification de dossier</h2>
+
+<input type="text" id="id" placeholder="Entrer votre ID">
+<button onclick="rechercher()">Rechercher</button>
+
+<div id="result"></div>
+
+<script>
 function rechercher() {
 
   let id = document.getElementById("id").value.trim();
@@ -26,18 +84,15 @@ function rechercher() {
 
       resultats.forEach(d => {
 
-        // 🎯 Statut
+        // Statut
         let statut = (d["Statut"] || "").toLowerCase();
         let statutCouleur = "gray";
         let statutTexte = d["Statut"] || "En attente";
 
-        if (statut === "valide") {
-          statutCouleur = "green";
-        } else if (statut === "en cours") {
-          statutCouleur = "orange";
-        }
+        if (statut === "valide") statutCouleur = "green";
+        else if (statut === "en cours") statutCouleur = "orange";
 
-        // 📅 Date sécurisée (IMPORTANT)
+        // Date
         let dateSoumission = "Non disponible";
         if (d["Submitted at"]) {
           let dateObj = new Date(d["Submitted at"]);
@@ -47,17 +102,8 @@ function rechercher() {
         }
 
         html += `
-          <div style="
-            background:#fff;
-            padding:20px;
-            margin:15px auto;
-            width:340px;
-            border-radius:12px;
-            color:#000;
-            box-shadow:0 5px 15px rgba(0,0,0,0.2);
-          ">
-
-            <h3 style="text-align:center;">📄 Dossier candidat</h3>
+          <div class="card">
+            <h3>📄 Dossier candidat</h3>
 
             <p><b>ID :</b> ${d["Submission ID"] || "-"}</p>
             <p><b>Date de soumission :</b> ${dateSoumission}</p>
@@ -85,12 +131,7 @@ function rechercher() {
         `;
       });
 
-      document.getElementById("result").innerHTML = `
-        <div style="font-size:18px; margin-bottom:10px;">
-          🔍 Résultat pour ID : <b>${id}</b>
-        </div>
-        ${html}
-      `;
+      document.getElementById("result").innerHTML = "✅ Dossier trouvé<br>" + html;
 
     })
     .catch(error => {
@@ -98,3 +139,7 @@ function rechercher() {
       console.error(error);
     });
 }
+</script>
+
+</body>
+</html>
