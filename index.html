@@ -1,3 +1,4 @@
+<script>
 function rechercher() {
 
   let id = document.getElementById("id").value.trim();
@@ -26,7 +27,7 @@ function rechercher() {
 
       resultats.forEach(d => {
         html += `
-          <div style="background:#fff; padding:20px; margin:10px auto; width:350px; border-radius:12px; text-align:left;">
+          <div style="background:#fff; padding:15px; margin:10px auto; width:320px; border-radius:10px; color:black;">
             <b>ID :</b> ${d["Submission ID"]} <br>
             <b>Date de soumission :</b> ${d["Submitted at"] || ""} <br>
             <b>Prénom :</b> ${d["Prénom"] || ""} <br>
@@ -34,8 +35,8 @@ function rechercher() {
             <b>Date de naissance :</b> ${d["Date de naissance"] || ""} <br>
             <b>Nationalité :</b> ${d["Nationalité"] || ""} <br>
             <b>Poste :</b> ${d["Poste souhaité"] || ""} <br>
-            <b>Statut :</b> ${d["Statut"] || ""} <br>
-            <b>Commentaire :</b> ${d["Commentaire"] || ""}
+            <b>Statut :</b> ${d["Statut"] || "En attente"} <br>
+            <b>Commentaire :</b> ${d["Commentaire"] || "Aucun"}
           </div>
         `;
       });
@@ -45,6 +46,6 @@ function rechercher() {
     })
     .catch(error => {
       document.getElementById("result").innerHTML = "❌ Erreur de connexion";
-      console.error(error);
     });
 }
+</script>
