@@ -1,98 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Vérification de dossier</title>
+</head>
+
+<body style="font-family:Arial; background:#f06d06; color:white; text-align:center; padding:40px;">
+
+<h2>🔎 Vérification de dossier</h2>
+
+<input type="text" id="id" placeholder="Entrer votre ID" style="padding:10px; width:250px;">
+<button onclick="rechercher()" style="padding:10px;">Rechercher</button>
+
+<div id="result" style="margin-top:30px;"></div>
+
+<script>
 function rechercher() {
 
-  let id = document.getElementById("id").value.trim();
+  var id = document.getElementById("id").value.trim();
 
   if (!id) {
     document.getElementById("result").innerHTML = "⚠️ Veuillez entrer un ID";
     return;
   }
 
-  document.getElementById("result").innerHTML = "⏳ Recherche en cours...";
+  document.getElementById("result").innerHTML = "⏳ Recherche...";
 
   fetch("https://opensheet.elk.sh/1IHlqsby69hHzrbp5Ed-5BCH3AbDi4mliD4kmB7BB5bA/API")
-    .then(res => res.json())
-    .then(data => {
+    .then(function(res){ return res.json(); })
+    .then(function(data){
 
-      let resultats = data.filter(row => 
-        (row["Submission ID"] || "").toLowerCase().trim() === id.toLowerCase()
-      );
+      var trouve = false;
+      var html = "";
 
-      if (resultats.length === 0) {
-        document.getElementById("result").innerHTML = "❌ Aucun dossier trouvé";
-        return;
-      }
+      data.forEach(function(d){
 
-      let html = "";
+        if ((d["Submission ID"] || "").trim() === id) {
+          trouve = true;
 
-      resultats.forEach(d => {
-
-        // 🎯 Gestion du statut
-        let statut = (d["Statut"] || "").toLowerCase();
-        let statutCouleur = "gray";
-        let statutTexte = d["Statut"] || "En attente";
-
-        if (statut === "valide") {
-          statutCouleur = "green";
-        } 
-        else if (statut === "en cours") {
-          statutCouleur = "orange";
+          html += "<div style='background:white;color:black;padding:15px;margin:20px auto;width:300px;border-radius:10px;text-align:left'>";
+          html += "<b>ID :</b> " + (d["Submission ID"] || "") + "<br>";
+          html += "<b>Date de soumission :</b> " + (d["Submitted at"] || "") + "<br>";
+          html += "<b>Prénom :</b> " + (d["Prénom"] || "") + "<br>";
+          html += "<b>Nom :</b> " + (d["Nom"] || "") + "<br>";
+          html += "<b>Date de naissance :</b> " + (d["Date de naissance"] || "") + "<br>";
+          html += "<b>Nationalité :</b> " + (d["Nationalité"] || "") + "<br>";
+          html += "<b>Poste :</b> " + (d["Poste souhaité"] || "") + "<br>";
+          html += "<b>Statut :</b> " + (d["Statut"] || "En attente") + "<br>";
+          html += "<b>Commentaire :</b> " + (d["Commentaire"] || "Aucun") + "<br>";
+          html += "</div>";
         }
 
-        // 📅 Format date de soumission
-        let dateSoumission = "Non disponible";
-        if (d["Submitted at"]) {
-          dateSoumission = new Date(d["Submitted at"]).toLocaleString("fr-FR");
-        }
-
-        html += `
-          <div style="
-            background:#fff;
-            padding:20px;
-            margin:15px auto;
-            width:340px;
-            border-radius:12px;
-            color:#000;
-            box-shadow:0 5px 15px rgba(0,0,0,0.2);
-          ">
-
-            <h3 style="text-align:center;">📄 Dossier candidat</h3>
-
-            <p><b>ID :</b> ${d["Submission ID"]}</p>
-            <p><b>Date de soumission :</b> ${dateSoumission}</p>
-            <p><b>Prénom :</b> ${d["Prénom"]}</p>
-            <p><b>Nom :</b> ${d["Nom"]}</p>
-            <p><b>Date de naissance :</b> ${d["Date de naissance"]}</p>
-            <p><b>Nationalité :</b> ${d["Nationalité"]}</p>
-            <p><b>Poste :</b> ${d["Poste souhaité"]}</p>
-
-            <p>
-              <b>Statut :</b> 
-              <span style="
-                background:${statutCouleur};
-                color:white;
-                padding:5px 10px;
-                border-radius:6px;
-              ">
-                ${statutTexte}
-              </span>
-            </p>
-
-            <p><b>Commentaire :</b> ${d["Commentaire"] || "Aucun"}</p>
-
-          </div>
-        `;
       });
 
-      document.getElementById("result").innerHTML = `
-        <div style="font-size:18px; margin-bottom:10px;">
-          🔍 Résultat pour ID : <b>${id}</b>
-        </div>
-        ${html}
-      `;
+      if (!trouve) {
+        document.getElementById("result").innerHTML = "❌ Aucun dossier trouvé";
+      } else {
+        document.getElementById("result").innerHTML = "✅ Dossier trouvé" + html;
+      }
 
     })
-    .catch(error => {
+    .catch(function(){
       document.getElementById("result").innerHTML = "❌ Erreur de connexion";
-      console.error(error);
     });
+
 }
+</script>
+
+</body>
+</html>
