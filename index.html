@@ -2,58 +2,124 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Vérification de dossier</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vérification de dossier - C-Emploi</title>
 
 <style>
 body {
-  font-family: Arial;
-  background: #f06d06;
-  text-align: center;
-  padding: 40px;
-  color: white;
+  margin:0;
+  font-family: Arial, sans-serif;
+  text-align:center;
+  color:white;
+
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+              url('https://images.unsplash.com/photo-1521790797524-b2497295b8a0');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
+.container {
+  max-width:600px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+/* LOGO */
+.logo {
+  width:90px;
+  margin-bottom:10px;
+}
+
+/* DRAPEAUX */
+.flags {
+  margin:10px 0;
+}
+
+.flags img {
+  width:40px;
+  margin:5px;
+  border-radius:5px;
+}
+
+/* INPUT */
 input {
-  padding: 12px;
-  width: 250px;
-  border-radius: 6px;
-  border: none;
+  padding:12px;
+  width:70%;
+  border-radius:8px;
+  border:none;
 }
 
+/* BUTTON */
 button {
-  padding: 12px 20px;
-  background: black;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-left: 10px;
+  padding:12px 20px;
+  background:#ff7a00;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
 }
 
 button:hover {
-  background: #333;
+  background:#e56700;
 }
 
+/* CARD RESULT */
 .card {
-  background: #fff;
-  padding: 20px;
-  margin: 20px auto;
-  width: 340px;
-  border-radius: 12px;
-  color: #000;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  background:rgba(255,255,255,0.95);
+  padding:20px;
+  margin-top:20px;
+  border-radius:12px;
+  color:black;
+  box-shadow:0 8px 25px rgba(0,0,0,0.3);
+  text-align:left;
+}
+
+/* STATUS */
+.status {
+  padding:6px 12px;
+  border-radius:6px;
+  color:white;
+  font-weight:bold;
+}
+
+.footer {
+  margin-top:40px;
+  font-size:12px;
+  opacity:0.8;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🔎 Vérification de dossier</h2>
+<div class="container">
 
-<input type="text" id="id" placeholder="Entrer votre ID">
-<button onclick="rechercher()">Rechercher</button>
+  <!-- LOGO -->
+  <img src="TON_LOGO.png" class="logo">
 
-<div id="result"></div>
+  <h2>🔎 Vérification de dossier</h2>
+
+  <!-- DRAPEAUX -->
+  <div class="flags">
+    <img src="https://flagcdn.com/w40/tg.png">
+    <img src="https://flagcdn.com/w40/bj.png">
+    <img src="https://flagcdn.com/w40/ci.png">
+    <img src="https://flagcdn.com/w40/ca.png">
+  </div>
+
+  <p>Plateforme officielle de vérification des candidatures</p>
+
+  <input type="text" id="id" placeholder="Entrer votre ID">
+  <button onclick="rechercher()">Rechercher</button>
+
+  <div id="result"></div>
+
+  <div class="footer">
+    © C-Emploi — Plateforme sécurisée
+  </div>
+
+</div>
 
 <script>
 function rechercher() {
@@ -69,83 +135,54 @@ function rechercher() {
   resultDiv.innerHTML = "⏳ Recherche en cours...";
 
   fetch("https://opensheet.elk.sh/1IHlqsby69hHzrbp5Ed-5BCH3AbDi4mliD4kmB7BB5bA/API")
-    .then(res => {
-      if (!res.ok) throw new Error("Erreur serveur");
-      return res.json();
-    })
+    .then(res => res.json())
     .then(data => {
 
-      if (!Array.isArray(data)) {
-        throw new Error("Format invalide");
-      }
-
-      let resultats = data.filter(row => 
+      let result = data.find(row => 
         (row["Submission ID"] || "").toLowerCase().trim() === id.toLowerCase()
       );
 
-      if (resultats.length === 0) {
+      if (!result) {
         resultDiv.innerHTML = "❌ Aucun dossier trouvé";
         return;
       }
 
-      let html = "";
+      let statut = (result["Statut"] || "").toLowerCase();
+      let couleur = "gray";
 
-      resultats.forEach(d => {
+      if (statut === "valide") couleur = "green";
+      else if (statut === "en cours") couleur = "orange";
+      else if (statut === "refusé") couleur = "red";
 
-        let statut = (d["Statut"] || "").toLowerCase();
-        let statutCouleur = "gray";
-        let statutTexte = d["Statut"] || "En attente";
+      let date = "Non disponible";
+      if (result["Submitted at"]) {
+        let d = new Date(result["Submitted at"]);
+        if (!isNaN(d)) date = d.toLocaleString("fr-FR");
+      }
 
-        if (statut === "valide") statutCouleur = "green";
-        else if (statut === "en cours") statutCouleur = "orange";
+      resultDiv.innerHTML = `
+        <div class="card">
+          <h3>📄 Dossier candidat</h3>
 
-        let dateSoumission = "Non disponible";
-        if (d["Submitted at"]) {
-          let dateObj = new Date(d["Submitted at"]);
-          if (!isNaN(dateObj)) {
-            dateSoumission = dateObj.toLocaleString("fr-FR");
-          }
-        }
+          <p><b>ID :</b> ${result["Submission ID"]}</p>
+          <p><b>Date :</b> ${date}</p>
+          <p><b>Nom :</b> ${result["Nom"]}</p>
+          <p><b>Prénom :</b> ${result["Prénom"]}</p>
+          <p><b>Poste :</b> ${result["Poste souhaité"]}</p>
 
-        html += `
-          <div class="card">
-            <h3>📄 Dossier candidat</h3>
+          <p><b>Statut :</b>
+            <span class="status" style="background:${couleur}">
+              ${result["Statut"] || "En attente"}
+            </span>
+          </p>
 
-            <p><b>ID :</b> ${d["Submission ID"] || "-"}</p>
-            <p><b>Date de soumission :</b> ${dateSoumission}</p>
-            <p><b>Prénom :</b> ${d["Prénom"] || "-"}</p>
-            <p><b>Nom :</b> ${d["Nom"] || "-"}</p>
-            <p><b>Date de naissance :</b> ${d["Date de naissance"] || "-"}</p>
-            <p><b>Nationalité :</b> ${d["Nationalité"] || "-"}</p>
-            <p><b>Poste :</b> ${d["Poste souhaité"] || "-"}</p>
-
-            <p>
-              <b>Statut :</b> 
-              <span style="
-                background:${statutCouleur};
-                color:white;
-                padding:5px 10px;
-                border-radius:6px;
-              ">
-                ${statutTexte}
-              </span>
-            </p>
-
-            <p><b>Commentaire :</b> ${d["Commentaire"] || "Aucun"}</p>
-
-          </div>
-        `;
-      });
-
-      resultDiv.innerHTML = "✅ Dossier trouvé<br>" + html;
+          <p><b>Commentaire :</b> ${result["Commentaire"] || "Aucun"}</p>
+        </div>
+      `;
 
     })
-    .catch(error => {
-      resultDiv.innerHTML = `
-        ❌ Impossible de charger les données<br>
-        Vérifiez votre connexion internet.
-      `;
-      console.error(error);
+    .catch(() => {
+      resultDiv.innerHTML = "❌ Erreur de connexion au serveur";
     });
 }
 </script>
