@@ -16,7 +16,6 @@ body {
               url('https://images.unsplash.com/photo-1521791136064-7986c2920216');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
 }
 
 .container {
@@ -25,13 +24,57 @@ body {
   padding:40px 20px;
 }
 
-/* LOGO */
 .logo {
   width:90px;
-  margin-bottom:10px;
 }
 
-/* INPUT */
+/* CARD */
+.card {
+  background:white;
+  color:black;
+  padding:20px;
+  border-radius:12px;
+  margin-top:20px;
+  position:relative;
+}
+
+/* TAMPON */
+.stamp {
+  position:absolute;
+  top:20px;
+  right:20px;
+  font-size:20px;
+  padding:10px;
+  border:3px solid red;
+  color:red;
+  transform:rotate(-20deg);
+  font-weight:bold;
+  opacity:0.8;
+}
+
+/* BADGE */
+.badge {
+  display:inline-block;
+  padding:8px 15px;
+  border-radius:20px;
+  color:white;
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {transform:scale(1);}
+  50% {transform:scale(1.1);}
+  100% {transform:scale(1);}
+}
+
+button {
+  padding:12px;
+  background:#ff7a00;
+  border:none;
+  border-radius:8px;
+  color:white;
+}
+
 input {
   padding:12px;
   width:70%;
@@ -39,43 +82,14 @@ input {
   border:none;
 }
 
-/* BUTTON */
-button {
-  padding:12px 20px;
-  background:#ff7a00;
-  color:white;
-  border:none;
+.whatsapp {
+  margin-top:15px;
+  display:inline-block;
+  background:#25D366;
+  padding:10px 20px;
   border-radius:8px;
-  cursor:pointer;
-}
-
-button:hover {
-  background:#e56700;
-}
-
-/* CARD RESULT */
-.card {
-  background:rgba(255,255,255,0.95);
-  padding:20px;
-  margin-top:20px;
-  border-radius:12px;
-  color:black;
-  box-shadow:0 8px 25px rgba(0,0,0,0.3);
-  text-align:left;
-}
-
-/* STATUS */
-.status {
-  padding:6px 12px;
-  border-radius:6px;
   color:white;
-  font-weight:bold;
-}
-
-.footer {
-  margin-top:40px;
-  font-size:12px;
-  opacity:0.8;
+  text-decoration:none;
 }
 </style>
 </head>
@@ -84,87 +98,74 @@ button:hover {
 
 <div class="container">
 
-  <!-- LOGO -->
-  <img src="TON_LOGO.png" class="logo">
+<img src="TON_LOGO.png" class="logo">
 
-  <h2>🔎 Vérification de dossier</h2>
+<h2>🔎 Vérification de dossier</h2>
 
-  <p>Plateforme officielle de vérification des candidatures</p>
+<input id="id" placeholder="Entrer votre ID">
+<button onclick="rechercher()">Rechercher</button>
 
-  <input type="text" id="id" placeholder="Entrer votre ID">
-  <button onclick="rechercher()">Rechercher</button>
-
-  <div id="result"></div>
-
-  <div class="footer">
-    © C-Emploi — Plateforme sécurisée
-  </div>
+<div id="result"></div>
 
 </div>
 
 <script>
-function rechercher() {
+function rechercher(){
 
-  let id = document.getElementById("id").value.trim();
-  let resultDiv = document.getElementById("result");
+let id=document.getElementById("id").value.trim();
+let resultDiv=document.getElementById("result");
 
-  if (!id) {
-    resultDiv.innerHTML = "⚠️ Veuillez entrer un ID";
-    return;
-  }
+resultDiv.innerHTML="⏳ Chargement...";
 
-  resultDiv.innerHTML = "⏳ Recherche en cours...";
+fetch("https://opensheet.elk.sh/1IHlqsby69hHzrbp5Ed-5BCH3AbDi4mliD4kmB7BB5bA/API")
+.then(res=>res.json())
+.then(data=>{
 
-  fetch("https://opensheet.elk.sh/1IHlqsby69hHzrbp5Ed-5BCH3AbDi4mliD4kmB7BB5bA/API")
-    .then(res => res.json())
-    .then(data => {
+let r=data.find(d=>d["Submission ID"]==id);
 
-      let result = data.find(row => 
-        (row["Submission ID"] || "").toLowerCase().trim() === id.toLowerCase()
-      );
+if(!r){
+resultDiv.innerHTML="❌ Aucun dossier";
+return;
+}
 
-      if (!result) {
-        resultDiv.innerHTML = "❌ Aucun dossier trouvé";
-        return;
-      }
+let statut=r["Statut"]||"En attente";
+let couleur="gray";
+let stamp="EN COURS";
 
-      let statut = (result["Statut"] || "").toLowerCase();
-      let couleur = "gray";
+if(statut.toLowerCase()=="valide"){
+couleur="green";
+stamp="VALIDÉ";
+}
+if(statut.toLowerCase()=="refusé"){
+couleur="red";
+stamp="REFUSÉ";
+}
 
-      if (statut === "valide") couleur = "green";
-      else if (statut === "en cours") couleur = "orange";
-      else if (statut === "refusé") couleur = "red";
+resultDiv.innerHTML=`
+<div class="card">
 
-      let date = "Non disponible";
-      if (result["Submitted at"]) {
-        let d = new Date(result["Submitted at"]);
-        if (!isNaN(d)) date = d.toLocaleString("fr-FR");
-      }
+<div class="stamp">${stamp}</div>
 
-      resultDiv.innerHTML = `
-        <div class="card">
-          <h3>📄 Dossier candidat</h3>
+<h3>Dossier candidat</h3>
 
-          <p><b>ID :</b> ${result["Submission ID"]}</p>
-          <p><b>Date :</b> ${date}</p>
-          <p><b>Nom :</b> ${result["Nom"]}</p>
-          <p><b>Prénom :</b> ${result["Prénom"]}</p>
-          <p><b>Poste :</b> ${result["Poste souhaité"]}</p>
+<p><b>ID:</b> ${r["Submission ID"]}</p>
+<p><b>Nom:</b> ${r["Nom"]}</p>
+<p><b>Prénom:</b> ${r["Prénom"]}</p>
 
-          <p><b>Statut :</b>
-            <span class="status" style="background:${couleur}">
-              ${result["Statut"] || "En attente"}
-            </span>
-          </p>
+<p><b>Statut:</b>
+<span class="badge" style="background:${couleur}">
+${statut}
+</span>
+</p>
 
-          <p><b>Commentaire :</b> ${result["Commentaire"] || "Aucun"}</p>
-        </div>
-      `;
+<a class="whatsapp" href="https://wa.me/16134169403?text=Bonjour%20je%20veux%20vérifier%20mon%20dossier%20ID:${id}">
+Contacter WhatsApp
+</a>
 
-    })
-    .catch(() => {
-      resultDiv.innerHTML = "❌ Erreur de connexion au serveur";
-    });
+</div>
+`;
+
+});
 }
 </script>
 
