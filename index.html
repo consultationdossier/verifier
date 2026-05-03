@@ -34,17 +34,19 @@ body {
   animation:slideAnim 15s infinite;
 }
 
-/* 🇨🇦 IMAGES PROFESSIONNELLES */
+/* 🇨🇦 IMAGES CANADA PRO */
 .slide:nth-child(1) {
-  background:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab');
+  background:url('https://images.unsplash.com/photo-1508057198894-247b23fe5ade?auto=format&fit=crop&w=1600&q=80');
   animation-delay:0s;
 }
+
 .slide:nth-child(2) {
-  background:url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d');
+  background:url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80');
   animation-delay:5s;
 }
+
 .slide:nth-child(3) {
-  background:url('https://images.unsplash.com/photo-1497366216548-37526070297c');
+  background:url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1600&q=80');
   animation-delay:10s;
 }
 
@@ -73,12 +75,12 @@ body {
   padding:40px 20px;
 }
 
-/* drapeau */
+/* 🇨🇦 DRAPEAU */
 .flag {
   width:60px;
 }
 
-/* card */
+/* CARD */
 .card {
   background:white;
   color:black;
@@ -89,7 +91,7 @@ body {
   text-align:left;
 }
 
-/* tampon */
+/* 🔴 TAMPON */
 .stamp {
   position:absolute;
   top:20px;
@@ -102,7 +104,7 @@ body {
   font-weight:bold;
 }
 
-/* badge */
+/* 🎨 BADGE */
 .badge {
   padding:6px 12px;
   border-radius:20px;
@@ -110,7 +112,7 @@ body {
   font-weight:bold;
 }
 
-/* couleurs statut */
+/* COULEURS STATUT */
 .en-attente {background:gray;}
 .en-cours {background:orange;}
 .valide {background:green;}
@@ -129,9 +131,10 @@ button {
   border:none;
   border-radius:8px;
   color:white;
+  cursor:pointer;
 }
 
-/* footer */
+/* SIGNATURE */
 .footer {
   margin-top:40px;
   font-size:13px;
@@ -200,7 +203,7 @@ if(statut=="en cours"){classe="en-cours"; stamp="EN COURS";}
 if(statut=="valide"){classe="valide"; stamp="VALIDÉ";}
 if(statut=="refusé"){classe="refuse"; stamp="REFUSÉ";}
 
-/* date */
+/* DATE */
 let date="Non disponible";
 if(r["Submitted at"]){
 let d=new Date(r["Submitted at"]);
