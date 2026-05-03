@@ -13,9 +13,8 @@ body {
   color:white;
 
   background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
-              url('https://images.unsplash.com/photo-1521791136064-7986c2920216');
+  url('https://images.unsplash.com/photo-1556745757-8d76bdb6984b');
   background-size: cover;
-  background-position: center;
 }
 
 .container {
@@ -36,6 +35,7 @@ body {
   border-radius:12px;
   margin-top:20px;
   position:relative;
+  text-align:left;
 }
 
 /* TAMPON */
@@ -43,19 +43,18 @@ body {
   position:absolute;
   top:20px;
   right:20px;
-  font-size:20px;
-  padding:10px;
+  font-size:18px;
+  padding:8px;
   border:3px solid red;
   color:red;
   transform:rotate(-20deg);
   font-weight:bold;
-  opacity:0.8;
 }
 
 /* BADGE */
 .badge {
   display:inline-block;
-  padding:8px 15px;
+  padding:6px 12px;
   border-radius:20px;
   color:white;
   animation:pulse 1.5s infinite;
@@ -98,7 +97,7 @@ input {
 
 <div class="container">
 
-<img src="TON_LOGO.png" class="logo">
+<img src="https://via.placeholder.com/90" class="logo">
 
 <h2>🔎 Vérification de dossier</h2>
 
@@ -115,20 +114,26 @@ function rechercher(){
 let id=document.getElementById("id").value.trim();
 let resultDiv=document.getElementById("result");
 
+if(!id){
+resultDiv.innerHTML="⚠️ Entrez un ID";
+return;
+}
+
 resultDiv.innerHTML="⏳ Chargement...";
 
 fetch("https://opensheet.elk.sh/1IHlqsby69hHzrbp5Ed-5BCH3AbDi4mliD4kmB7BB5bA/API")
 .then(res=>res.json())
 .then(data=>{
 
-let r=data.find(d=>d["Submission ID"]==id);
+let r=data.find(d=>(d["Submission ID"]||"").toLowerCase()==id.toLowerCase());
 
 if(!r){
-resultDiv.innerHTML="❌ Aucun dossier";
+resultDiv.innerHTML="❌ Aucun dossier trouvé";
 return;
 }
 
-let statut=r["Statut"]||"En attente";
+/* STATUT */
+let statut=(r["Statut"]||"En attente");
 let couleur="gray";
 let stamp="EN COURS";
 
@@ -141,6 +146,19 @@ couleur="red";
 stamp="REFUSÉ";
 }
 
+/* DATE */
+let date="Non disponible";
+if(r["Submitted at"]){
+let d=new Date(r["Submitted at"]);
+if(!isNaN(d)) date=d.toLocaleString("fr-FR");
+}
+
+/* AUTRES INFOS */
+let commentaire=r["Commentaire"]||"Aucun";
+let poste=r["Poste souhaité"]||"-";
+let nationalite=r["Nationalité"]||"-";
+let naissance=r["Date de naissance"]||"-";
+
 resultDiv.innerHTML=`
 <div class="card">
 
@@ -149,14 +167,20 @@ resultDiv.innerHTML=`
 <h3>Dossier candidat</h3>
 
 <p><b>ID:</b> ${r["Submission ID"]}</p>
+<p><b>Date:</b> ${date}</p>
 <p><b>Nom:</b> ${r["Nom"]}</p>
 <p><b>Prénom:</b> ${r["Prénom"]}</p>
+<p><b>Date de naissance:</b> ${naissance}</p>
+<p><b>Nationalité:</b> ${nationalite}</p>
+<p><b>Poste:</b> ${poste}</p>
 
 <p><b>Statut:</b>
 <span class="badge" style="background:${couleur}">
 ${statut}
 </span>
 </p>
+
+<p><b>Commentaire:</b> ${commentaire}</p>
 
 <a class="whatsapp" href="https://wa.me/16134169403?text=Bonjour%20je%20veux%20vérifier%20mon%20dossier%20ID:${id}">
 Contacter WhatsApp
@@ -165,7 +189,11 @@ Contacter WhatsApp
 </div>
 `;
 
+})
+.catch(()=>{
+resultDiv.innerHTML="❌ Erreur serveur";
 });
+
 }
 </script>
 
