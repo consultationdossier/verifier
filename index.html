@@ -12,9 +12,11 @@ body {
   text-align:center;
   color:white;
 
-  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
-  url('https://images.unsplash.com/photo-1556745757-8d76bdb6984b');
+  /* FOND STYLE INSTITUTION CANADA */
+  background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+  url('https://images.unsplash.com/photo-1507679799987-c73779587ccf');
   background-size: cover;
+  background-position: center;
 }
 
 .container {
@@ -23,8 +25,10 @@ body {
   padding:40px 20px;
 }
 
-.logo {
-  width:90px;
+/* DRAPEAU CANADA */
+.flag {
+  width:60px;
+  margin-bottom:10px;
 }
 
 /* CARD */
@@ -68,7 +72,7 @@ body {
 
 button {
   padding:12px;
-  background:#ff7a00;
+  background:#d32f2f;
   border:none;
   border-radius:8px;
   color:white;
@@ -81,14 +85,11 @@ input {
   border:none;
 }
 
-.whatsapp {
-  margin-top:15px;
-  display:inline-block;
-  background:#25D366;
-  padding:10px 20px;
-  border-radius:8px;
-  color:white;
-  text-decoration:none;
+/* SIGNATURE */
+.footer {
+  margin-top:40px;
+  font-size:13px;
+  opacity:0.9;
 }
 </style>
 </head>
@@ -97,14 +98,20 @@ input {
 
 <div class="container">
 
-<img src="https://via.placeholder.com/90" class="logo">
+<!-- 🇨🇦 DRAPEAU CANADA -->
+<img src="https://flagcdn.com/w80/ca.png" class="flag">
 
-<h2>🔎 Vérification de dossier</h2>
+<h2>🔎 Vérification officielle de dossier</h2>
+<p>Système sécurisé - Service d’emploi Canada</p>
 
 <input id="id" placeholder="Entrer votre ID">
 <button onclick="rechercher()">Rechercher</button>
 
 <div id="result"></div>
+
+<div class="footer">
+✍️ Emploi Canada — Système de vérification officiel
+</div>
 
 </div>
 
@@ -119,7 +126,7 @@ resultDiv.innerHTML="⚠️ Entrez un ID";
 return;
 }
 
-resultDiv.innerHTML="⏳ Chargement...";
+resultDiv.innerHTML="⏳ Vérification en cours...";
 
 fetch("https://opensheet.elk.sh/1IHlqsby69hHzrbp5Ed-5BCH3AbDi4mliD4kmB7BB5bA/API")
 .then(res=>res.json())
@@ -132,7 +139,6 @@ resultDiv.innerHTML="❌ Aucun dossier trouvé";
 return;
 }
 
-/* STATUT */
 let statut=(r["Statut"]||"En attente");
 let couleur="gray";
 let stamp="EN COURS";
@@ -153,12 +159,6 @@ let d=new Date(r["Submitted at"]);
 if(!isNaN(d)) date=d.toLocaleString("fr-FR");
 }
 
-/* AUTRES INFOS */
-let commentaire=r["Commentaire"]||"Aucun";
-let poste=r["Poste souhaité"]||"-";
-let nationalite=r["Nationalité"]||"-";
-let naissance=r["Date de naissance"]||"-";
-
 resultDiv.innerHTML=`
 <div class="card">
 
@@ -170,9 +170,8 @@ resultDiv.innerHTML=`
 <p><b>Date:</b> ${date}</p>
 <p><b>Nom:</b> ${r["Nom"]}</p>
 <p><b>Prénom:</b> ${r["Prénom"]}</p>
-<p><b>Date de naissance:</b> ${naissance}</p>
-<p><b>Nationalité:</b> ${nationalite}</p>
-<p><b>Poste:</b> ${poste}</p>
+<p><b>Nationalité:</b> ${r["Nationalité"]}</p>
+<p><b>Poste:</b> ${r["Poste souhaité"]}</p>
 
 <p><b>Statut:</b>
 <span class="badge" style="background:${couleur}">
@@ -180,11 +179,7 @@ ${statut}
 </span>
 </p>
 
-<p><b>Commentaire:</b> ${commentaire}</p>
-
-<a class="whatsapp" href="https://wa.me/16134169403?text=Bonjour%20je%20veux%20vérifier%20mon%20dossier%20ID:${id}">
-Contacter WhatsApp
-</a>
+<p><b>Commentaire:</b> ${r["Commentaire"]||"Aucun"}</p>
 
 </div>
 `;
