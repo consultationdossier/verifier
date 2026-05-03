@@ -14,7 +14,7 @@ body {
   overflow-x:hidden;
 }
 
-/* 🎞️ BACKGROUND SLIDER */
+/* 🎞️ SLIDER BACKGROUND */
 .slider {
   position:fixed;
   top:0;
@@ -34,22 +34,23 @@ body {
   animation:slideAnim 15s infinite;
 }
 
-/* 🇨🇦 IMAGES CANADA PRO */
+/* 🔥 TES IMAGES */
 .slide:nth-child(1) {
-  background:url('https://images.unsplash.com/photo-1508057198894-247b23fe5ade?auto=format&fit=crop&w=1600&q=80');
+  background:url('images/montreal.jpg');
   animation-delay:0s;
 }
 
 .slide:nth-child(2) {
-  background:url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80');
+  background:url('images/emploi.jpg');
   animation-delay:5s;
 }
 
 .slide:nth-child(3) {
-  background:url('https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1600&q=80');
+  background:url('images/immigration.jpg');
   animation-delay:10s;
 }
 
+/* animation */
 @keyframes slideAnim {
   0% {opacity:0;}
   10% {opacity:1;}
@@ -78,6 +79,7 @@ body {
 /* 🇨🇦 DRAPEAU */
 .flag {
   width:60px;
+  margin-bottom:10px;
 }
 
 /* CARD */
@@ -112,7 +114,6 @@ body {
   font-weight:bold;
 }
 
-/* COULEURS STATUT */
 .en-attente {background:gray;}
 .en-cours {background:orange;}
 .valide {background:green;}
@@ -134,10 +135,10 @@ button {
   cursor:pointer;
 }
 
-/* SIGNATURE */
 .footer {
   margin-top:40px;
   font-size:13px;
+  opacity:0.9;
 }
 </style>
 </head>
@@ -150,6 +151,7 @@ button {
   <div class="slide"></div>
   <div class="slide"></div>
 </div>
+
 <div class="overlay"></div>
 
 <div class="container">
