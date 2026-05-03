@@ -28,13 +28,14 @@ body {
   position:absolute;
   width:100%;
   height:100%;
-  background-size:cover;
-  background-position:center;
+  background-size:cover;       /* ✔ corrige découpage */
+  background-position:center;  /* ✔ centre image */
+  background-repeat:no-repeat; /* ✔ pas de répétition */
   opacity:0;
-  animation:slideAnim 15s infinite;
+  animation:slideAnim 15s infinite, zoom 15s infinite;
 }
 
-/* ✅ CHEMIN CORRECT (SANS images/) */
+/* TES IMAGES */
 .slide:nth-child(1) {
   background:url('montreal.jpg');
   animation-delay:0s;
@@ -50,7 +51,7 @@ body {
   animation-delay:10s;
 }
 
-/* animation */
+/* animation slide */
 @keyframes slideAnim {
   0% {opacity:0;}
   10% {opacity:1;}
@@ -59,14 +60,20 @@ body {
   100% {opacity:0;}
 }
 
-/* overlay sombre */
+/* 🎬 zoom lent pro */
+@keyframes zoom {
+  0% {transform:scale(1);}
+  100% {transform:scale(1.1);}
+}
+
+/* overlay */
 .overlay {
   position:fixed;
   top:0;
   left:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.75);
+  background:rgba(0,0,0,0.6);
   z-index:-1;
 }
 
@@ -93,7 +100,7 @@ body {
   text-align:left;
 }
 
-/* 🔴 TAMPON */
+/* 🔴 tampon */
 .stamp {
   position:absolute;
   top:20px;
@@ -106,7 +113,7 @@ body {
   font-weight:bold;
 }
 
-/* 🎨 BADGE */
+/* 🎨 badges */
 .badge {
   padding:6px 12px;
   border-radius:20px;
@@ -203,7 +210,6 @@ if(statut=="en cours"){classe="en-cours"; stamp="EN COURS";}
 if(statut=="valide"){classe="valide"; stamp="VALIDÉ";}
 if(statut=="refusé"){classe="refuse"; stamp="REFUSÉ";}
 
-/* DATE */
 let date="Non disponible";
 if(r["Submitted at"]){
 let d=new Date(r["Submitted at"]);
@@ -239,7 +245,6 @@ ${r["Statut"]}
 .catch(()=>{
 resultDiv.innerHTML="❌ Erreur serveur";
 });
-
 }
 </script>
 
