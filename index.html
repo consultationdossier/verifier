@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vérification de dossier - C-Emploi</title>
+<title>Vérification officielle - Emploi Canada</title>
 
 <style>
 body {
@@ -11,12 +11,60 @@ body {
   font-family: Arial, sans-serif;
   text-align:center;
   color:white;
+  overflow-x:hidden;
+}
 
-  /* FOND STYLE INSTITUTION CANADA */
-  background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
-  url('https://images.unsplash.com/photo-1507679799987-c73779587ccf');
-  background-size: cover;
-  background-position: center;
+/* 🎞️ BACKGROUND SLIDER */
+.slider {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-2;
+}
+
+.slide {
+  position:absolute;
+  width:100%;
+  height:100%;
+  background-size:cover;
+  background-position:center;
+  opacity:0;
+  animation:slideAnim 15s infinite;
+}
+
+/* 🇨🇦 IMAGES PROFESSIONNELLES */
+.slide:nth-child(1) {
+  background:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab');
+  animation-delay:0s;
+}
+.slide:nth-child(2) {
+  background:url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d');
+  animation-delay:5s;
+}
+.slide:nth-child(3) {
+  background:url('https://images.unsplash.com/photo-1497366216548-37526070297c');
+  animation-delay:10s;
+}
+
+@keyframes slideAnim {
+  0% {opacity:0;}
+  10% {opacity:1;}
+  30% {opacity:1;}
+  40% {opacity:0;}
+  100% {opacity:0;}
+}
+
+/* overlay sombre */
+.overlay {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.75);
+  z-index:-1;
 }
 
 .container {
@@ -25,13 +73,12 @@ body {
   padding:40px 20px;
 }
 
-/* DRAPEAU CANADA */
+/* drapeau */
 .flag {
   width:60px;
-  margin-bottom:10px;
 }
 
-/* CARD */
+/* card */
 .card {
   background:white;
   color:black;
@@ -42,7 +89,7 @@ body {
   text-align:left;
 }
 
-/* TAMPON */
+/* tampon */
 .stamp {
   position:absolute;
   top:20px;
@@ -55,19 +102,25 @@ body {
   font-weight:bold;
 }
 
-/* BADGE */
+/* badge */
 .badge {
-  display:inline-block;
   padding:6px 12px;
   border-radius:20px;
   color:white;
-  animation:pulse 1.5s infinite;
+  font-weight:bold;
 }
 
-@keyframes pulse {
-  0% {transform:scale(1);}
-  50% {transform:scale(1.1);}
-  100% {transform:scale(1);}
+/* couleurs statut */
+.en-attente {background:gray;}
+.en-cours {background:orange;}
+.valide {background:green;}
+.refuse {background:red;}
+
+input {
+  padding:12px;
+  width:70%;
+  border-radius:8px;
+  border:none;
 }
 
 button {
@@ -78,31 +131,31 @@ button {
   color:white;
 }
 
-input {
-  padding:12px;
-  width:70%;
-  border-radius:8px;
-  border:none;
-}
-
-/* SIGNATURE */
+/* footer */
 .footer {
   margin-top:40px;
   font-size:13px;
-  opacity:0.9;
 }
 </style>
 </head>
 
 <body>
 
+<!-- 🎞️ BACKGROUND -->
+<div class="slider">
+  <div class="slide"></div>
+  <div class="slide"></div>
+  <div class="slide"></div>
+</div>
+<div class="overlay"></div>
+
 <div class="container">
 
-<!-- 🇨🇦 DRAPEAU CANADA -->
+<!-- 🇨🇦 -->
 <img src="https://flagcdn.com/w80/ca.png" class="flag">
 
 <h2>🔎 Vérification officielle de dossier</h2>
-<p>Système sécurisé - Service d’emploi Canada</p>
+<p>Système sécurisé — Service d’emploi Canada</p>
 
 <input id="id" placeholder="Entrer votre ID">
 <button onclick="rechercher()">Rechercher</button>
@@ -139,20 +192,15 @@ resultDiv.innerHTML="❌ Aucun dossier trouvé";
 return;
 }
 
-let statut=(r["Statut"]||"En attente");
-let couleur="gray";
-let stamp="EN COURS";
+let statut=(r["Statut"]||"en attente").toLowerCase();
+let classe="en-attente";
+let stamp="EN ATTENTE";
 
-if(statut.toLowerCase()=="valide"){
-couleur="green";
-stamp="VALIDÉ";
-}
-if(statut.toLowerCase()=="refusé"){
-couleur="red";
-stamp="REFUSÉ";
-}
+if(statut=="en cours"){classe="en-cours"; stamp="EN COURS";}
+if(statut=="valide"){classe="valide"; stamp="VALIDÉ";}
+if(statut=="refusé"){classe="refuse"; stamp="REFUSÉ";}
 
-/* DATE */
+/* date */
 let date="Non disponible";
 if(r["Submitted at"]){
 let d=new Date(r["Submitted at"]);
@@ -174,8 +222,8 @@ resultDiv.innerHTML=`
 <p><b>Poste:</b> ${r["Poste souhaité"]}</p>
 
 <p><b>Statut:</b>
-<span class="badge" style="background:${couleur}">
-${statut}
+<span class="badge ${classe}">
+${r["Statut"]}
 </span>
 </p>
 
